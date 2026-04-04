@@ -1,0 +1,40 @@
+# --- Python & uv ---
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.python-version
+# If you want to keep the lockfile (recommended for uv), do NOT ignore uv.lock
+
+# --- Terraform ---
+# Local execution files
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+*.tfvars.json
+
+# --- GCP & Secrets (CRITICAL) ---
+# Never commit your Service Account JSON keys
+*.json
+.env
+# If you name your keys specifically, add them here too
+auth.json
+key.json
+
+# --- Docker & Kestra ---
+# Kestra's internal Postgres database storage (don't commit local DB data)
+kestra/postgres/
+kestra/storage/
+.docker-compose.persist/
+
+# --- IDE & OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# --- dbt (If running locally later) ---
+dbt_project/target/
+dbt_project/dbt_packages/
+dbt_project/logs/
