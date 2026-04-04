@@ -23,6 +23,9 @@ resource "google_storage_bucket" "efa-bucket" {
 
   lifecycle_rule {
 
+    condition {
+      age = 1 
+    }
     action {
       type = "AbortIncompleteMultipartUpload"
     }
