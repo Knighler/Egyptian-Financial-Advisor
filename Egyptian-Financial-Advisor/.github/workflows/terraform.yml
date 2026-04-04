@@ -4,7 +4,7 @@ on:
     branches:
       - main
     paths:
-      - 'terraform/**'
+      - 'Egyptian-Financial-Advisor/terraform/**'
   pull_request:
     branches:
       - main
@@ -24,7 +24,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./terraform
+        working-directory: ./Egyptian-Financial-Advisor/terraform
 
     steps:
     - name: Checkout
