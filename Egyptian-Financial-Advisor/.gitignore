@@ -34,7 +34,7 @@ kestra/storage/
 .DS_Store
 Thumbs.db
 
-# --- dbt (If running locally later) ---
+
 dbt_project/target/
 dbt_project/dbt_packages/
 dbt_project/logs/
