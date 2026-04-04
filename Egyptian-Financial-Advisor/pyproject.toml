@@ -11,3 +11,8 @@ dependencies = [
     "streamlit>=1.56.0",
     "yfinance>=1.2.0",
 ]
+
+[tool.uv.workspace]
+members = [
+    "python3.13",
+]
