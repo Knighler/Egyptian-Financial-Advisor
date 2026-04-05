@@ -47,7 +47,7 @@ resource "google_bigquery_dataset" "efa_dataset" {
 resource "google_compute_instance" "kestra_vm" {
   name         = "kestra-orchestrator"
   machine_type = "e2-medium"
-  zone         = "US" 
+  zone         = "us-central1-a" 
 
   boot_disk {
     initialize_params {
