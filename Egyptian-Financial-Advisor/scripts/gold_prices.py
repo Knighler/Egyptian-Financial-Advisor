@@ -6,7 +6,6 @@ import os
 def extract_gold_prices():
     print("Calculating Egyptian Gold prices...")
     
-
     gold_ticker = yf.Ticker("GC=F")
     gold_hist = gold_ticker.history(period="5d")
     
@@ -16,7 +15,6 @@ def extract_gold_prices():
     global_gold_usd_ounce = gold_hist['Close'].iloc[-1]
     last_trading_date = gold_hist.index[-1].strftime('%Y-%m-%d')
     
-
     egp_ticker = yf.Ticker("EGP=X")
     egp_hist = egp_ticker.history(period="5d")
     
@@ -27,7 +25,6 @@ def extract_gold_prices():
 
     gold_usd_gram = global_gold_usd_ounce / 31.1034 
     
-
     gold_24k_egp = gold_usd_gram * usd_to_egp_rate
     standard_karats = [24, 22, 21, 18, 14, 12, 10, 9]
     gold_prices_by_karat = {
@@ -42,8 +39,13 @@ def extract_gold_prices():
         'extracted_at': [datetime.now().isoformat()]
     })
     
-    os.makedirs("./data", exist_ok=True)
-    file_path = "./data/egypt_gold_latest.csv"
+    # Dynamically find the project root and data directory
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.abspath(os.path.join(base_dir, ".."))
+    data_dir = os.path.join(project_root, "data")
+    
+    os.makedirs(data_dir, exist_ok=True)
+    file_path = os.path.join(data_dir, "egypt_gold_latest.csv")
     df.to_csv(file_path, index=False)
     print(f"Saved gold prices to {file_path}")
 

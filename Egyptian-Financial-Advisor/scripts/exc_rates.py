@@ -4,7 +4,6 @@ from datetime import datetime
 import os
 
 def extract_usd_egp():
-    
     print("Fetching USD to EGP exchange rate...")
     ticker = yf.Ticker("EGP=X")
     
@@ -26,11 +25,15 @@ def extract_usd_egp():
         'extracted_at': [datetime.now().isoformat()]
     })
     
-    os.makedirs("./data", exist_ok=True)
-    file_path = "./data/usd_egp_latest.csv"
+    # Dynamically find the project root and data directory
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.abspath(os.path.join(base_dir, ".."))
+    data_dir = os.path.join(project_root, "data")
+    
+    os.makedirs(data_dir, exist_ok=True)
+    file_path = os.path.join(data_dir, "usd_egp_latest.csv")
     df.to_csv(file_path, index=False)
     print(f"Saved exchange rate to {file_path}")
-    
 
 if __name__ == "__main__":
     extract_usd_egp()

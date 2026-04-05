@@ -5,7 +5,13 @@ import os
 
 def run_historical_backfill():
     print("Starting Massive 5-Year Historical Backfill...")
-    os.makedirs("data", exist_ok=True)
+    
+    # Dynamically find the project root
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.abspath(os.path.join(base_dir, ".."))
+    
+    data_dir = os.path.join(project_root, "data")
+    os.makedirs(data_dir, exist_ok=True)
     
     # --- 1. HISTORICAL EXCHANGE RATES ---
     print("Fetching USD/EGP history...")
@@ -18,7 +24,8 @@ def run_historical_backfill():
             'exchange_rate': round(row['Close'], 2),
             'extracted_at': datetime.now().isoformat()
         })
-    pd.DataFrame(egp_rows).to_csv("data/historical_exchange.csv", index=False)
+    exchange_path = os.path.join(data_dir, "historical_exchange.csv")
+    pd.DataFrame(egp_rows).to_csv(exchange_path, index=False)
 
     # --- 2. HISTORICAL GOLD PRICES ---
     print("Fetching Global Gold history and calculating EGP fair value...")
@@ -45,11 +52,14 @@ def run_historical_backfill():
             'global_ounce_usd': round(row['global_ounce_usd'], 2),
             'extracted_at': datetime.now().isoformat()
         })
-    pd.DataFrame(gold_rows).to_csv("data/historical_gold.csv", index=False)
+    gold_path = os.path.join(data_dir, "historical_gold.csv")
+    pd.DataFrame(gold_rows).to_csv(gold_path, index=False)
 
     # --- 3. HISTORICAL EGX STOCKS ---
     print("Fetching EGX Stocks history (This will take a few minutes)...")
-    with open("config/egx_tickers.txt", "r") as file:
+    
+    config_path = os.path.join(project_root, "config", "egx_tickers.txt")
+    with open(config_path, "r") as file:
         tickers = [line.strip() for line in file if line.strip()]
         
     stock_rows = []
@@ -68,7 +78,8 @@ def run_historical_backfill():
             print(f"Skipped {symbol} or missing historical data.")
 
     df_stocks = pd.DataFrame(stock_rows)
-    df_stocks.to_csv("data/historical_stocks.csv", index=False)
+    stocks_path = os.path.join(data_dir, "historical_stocks.csv")
+    df_stocks.to_csv(stocks_path, index=False)
     
     print(f"Total Stock Records: {len(df_stocks)}")
 
