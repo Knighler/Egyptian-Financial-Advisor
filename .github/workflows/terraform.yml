@@ -47,7 +47,10 @@ jobs:
 
     - name: Terraform Init
       id: init
-      run: terraform init
+      run: |
+        terraform init \
+        -backend-config="bucket=${{ secrets.GCP_PROJECT_ID }}-terraform-state" \
+        -reconfigure
 
     - name: Terraform Validate
       id: validate
