@@ -44,4 +44,5 @@ services:
     volumes:
       - ./scripts:/app/scripts
       - ./config:/app/config
+      - ./gcp-key.json:/app/gcp-key.json:ro
       - /var/run/docker.sock:/var/run/docker.sock 
