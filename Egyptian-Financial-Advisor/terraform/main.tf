@@ -1,6 +1,5 @@
 terraform {
     backend "gcs" {
-    
     prefix  = "terraform/state"
   }
   required_providers {
