@@ -41,6 +41,7 @@ services:
               username: kestra
               password: kestra_password
               database: kestra
+      GCP_CREDS: ${GCP_CREDS}
     volumes:
       - ./scripts:/app/scripts
       - ./config:/app/config
