@@ -27,7 +27,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      ENV_GCP_CREDS: ${GCP_CREDS}
+      ENV_GCD_CREDS: ${GCD_CREDS}
       KESTRA_CONFIGURATION: |
         kestra:
           datastore:
