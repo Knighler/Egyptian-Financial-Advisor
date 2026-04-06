@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: efa_raw
+    database: de-practice-490214 # Your GCP Project ID
+    schema: efa_raw_dataset      # The dataset Kestra writes to
+    tables:
+      - name: raw_stocks
+      - name: raw_gold
+      - name: raw_exchange
