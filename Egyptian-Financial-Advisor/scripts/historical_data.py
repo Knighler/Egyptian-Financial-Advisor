@@ -34,7 +34,18 @@ def run_historical_backfill():
     # We must merge Gold and EGP on exact dates to calculate historical local prices
     df_gold = gold_hist[['Close']].rename(columns={'Close': 'global_ounce_usd'})
     df_egp = egp_hist[['Close']].rename(columns={'Close': 'usd_egp'})
+
+    # FIX: Remove timezones and normalize to midnight to ensure the join works
+    df_gold.index = df_gold.index.tz_localize(None).normalize()
+    df_egp.index = df_egp.index.tz_localize(None).normalize()
+
+    # Now the join will find matching dates
     df_merged = df_gold.join(df_egp, how='inner').dropna()
+    
+    if df_merged.empty:
+        print("WARNING: df_merged is still empty. Check if date ranges overlap.")
+    else:
+        print(f"Successfully merged {len(df_merged)} days of Gold and EGP data.")
 
     gold_rows = []
     for date, row in df_merged.iterrows():
@@ -52,9 +63,9 @@ def run_historical_backfill():
             'global_ounce_usd': round(row['global_ounce_usd'], 2),
             'extracted_at': datetime.now().isoformat()
         })
+    
     gold_path = os.path.join(data_dir, "historical_gold.csv")
     pd.DataFrame(gold_rows).to_csv(gold_path, index=False)
-
     # --- 3. HISTORICAL EGX STOCKS ---
     print("Fetching EGX Stocks history (This will take a few minutes)...")
     
