@@ -27,6 +27,7 @@ services:
     ports:
       - "8080:8080"
     environment:
+      ENV_GCP_CREDS: ${GCP_CREDS}
       KESTRA_CONFIGURATION: |
         kestra:
           datastore:
@@ -41,7 +42,7 @@ services:
               username: kestra
               password: kestra_password
               database: kestra
-      ENV_GCP_CREDS: ${GCP_CREDS}
+      
     volumes:
       - ./scripts:/app/scripts
       - ./config:/app/config
