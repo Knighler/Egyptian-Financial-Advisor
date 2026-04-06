@@ -42,7 +42,6 @@ services:
               username: kestra
               password: kestra_password
               database: kestra
-        - GOOGLE_APPLICATION_CREDENTIALS=/app/gcp-creds.json
       
     volumes:
       - ./scripts:/app/scripts
