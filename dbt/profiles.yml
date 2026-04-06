@@ -1,0 +1,82 @@
+user:
+  outputs:
+    default:
+      keyfile_json:
+        auth_provider_x509_cert_url: https://www.googleapis.com/oauth2/v1/certs
+        auth_uri: https://accounts.google.com/o/oauth2/auth
+        client_email: kni-759@de-practice-490214.iam.gserviceaccount.com
+        client_id: '104802798385364962014'
+        client_x509_cert_url: https://www.googleapis.com/robot/v1/metadata/x509/kni-759%40de-practice-490214.iam.gserviceaccount.com
+        private_key: '-----BEGIN PRIVATE KEY-----
+
+          MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDhmIKq6gr65noy
+
+          aniPa0KOUCue3E62PA38sLDb9KYKnHl+/nMdqnqqZcDIhepFmrnvByoFwp2wdBfZ
+
+          0FkxZ29tpDmWh+dI2w3p33+DpzrBD8kX63ocrqeTsN//1jamNHxGTXLqrYHkq0wi
+
+          rtZEFspS4Ikci3pE61JcmmD2dKqjWT0zNHungoSxd5tnzCtyfAmbc6LTiGCm8d4G
+
+          /e56ewC0nPwwuKtTbAMdowDPTF2FcvbxBcCa24fm+oHykv+RRUWqOlwFCdFrV+bi
+
+          G6QVZxn6Sex1kkjpzyXFp/YM+pSKgUHBTyqrqeitUM8zOC4PRqr6GdwLyIZOuf9j
+
+          D76XPXNJAgMBAAECggEAEIXbDCmYJEg9KvQhYF+6wDGfAEOigDZlz9whF/sTLjPH
+
+          skVwqPuTgGdzdzxXrEFo3NjpewKGCiZ2mL1pyvSIdL9SeHP7vJpOqpJ0BHB7HSjK
+
+          0bWte+xO2cJapaJK3mF5uKxzfjy3BsiFCwVDLDl/GBLZ9/0/N00E+0NTVrm0xcHg
+
+          Q1RhvRR67yW3EeZQ7bbLtMoSkLJ1LrdOm/ww/4XFODsDLKNi6oniGgFbm5zIC9rG
+
+          3fYhaFj97rV0ysH6HOSRh66cZWq9gD5aha6zHf6b5TrlXCAz33NNXM8qCB2e/+Sa
+
+          pfbNnR4qt19bmhxgvxg4JL0HbdvicQ29oGCH2F/rAQKBgQD16eCXhxEt+szYdSuW
+
+          eXoHE1wAAyK7IZn1IDK8dAtx6JF1SOG9MufrlDuUEKB4yyRVffORDMHjAEMNFOTx
+
+          n0m0jdjlGZwlhq8WxR1xnq2v2klfZcjXyKWEiGPWInnXRHPI6R0yDvRa8rZZYfHG
+
+          pSwxe16PueKYRZG6g8249WKsAwKBgQDq2UsWZTsmu8Cd2SqrzDj5YWJWSwJYqIRs
+
+          /hxsR8gNMm7COx3H1nJZ46w+046vXEo4BgEnGlh0tDBxcPIPtlHWbksPc5TE6Es5
+
+          thnjR7Lp65YsQrCyAFpwl+eZje9LDz9BquQggnsb8K3toeqEq1T381zIU22YAyyb
+
+          KL4rjqrPwwKBgQCZ/mt2eE55zKSaqEUzZb7Uz3q9RzlolhIjPpaHDORd4JW2LH2w
+
+          TUCOdbUZc5AKFKwcHVN5cdO4o2FZv8vewzEUr/8y+Gaf2UerqqRVkliR1tA7vTGY
+
+          bz23UPG0FsLV2zfmiJSP1G2Qxo0KTBtrmeOi2O7OcklDsc0gT4l0WbYAoQKBgBX5
+
+          RuFNj39MSfV7AFcawKn0xrK0Sf/ppJpeHGK1RK6XbW2XAm5UTlbCyrcGLG+T/w3G
+
+          4gy6llQ1F+NFYiC+OmIJ59QGSIE0CvXXaAywBLmGZYK2qrm89rlaPT1M3nrzbkPC
+
+          rZ2tF7/BgUSexcasEUMx7hiAVdzHT0ElSsXgj3LpAoGBAOd1E4RA7KQgA9YwP8Mz
+
+          c5j/rIjrvB8m3bm5FUCD3FFgA73/uPa95cgg/usKgug2wq6Sn9zWwnQmEaq3qO3b
+
+          Uz7YuyNmDrB2SqTkBPOE0snE2rZlq/6k+zd1SQ1I8VGimBZxxyUZX3Jb1Ul3mGaS
+
+          4vb4VLc33K1jAkhm3WFP/BXf
+
+          -----END PRIVATE KEY-----
+
+          '
+        private_key_id: c58d608fc09121b06e75797c6917de7269dff21e
+        project_id: de-practice-490214
+        token_uri: https://oauth2.googleapis.com/token
+        type: service_account
+      method: service-account-json
+      project: de-practice-490214
+      schema: efa_dataset
+      scopes:
+      - https://www.googleapis.com/auth/bigquery
+      - https://www.googleapis.com/auth/cloud-platform
+      - https://www.googleapis.com/auth/drive
+      - https://www.googleapis.com/auth/userinfo.email
+      target_name: default
+      threads: 6
+      type: bigquery
+  target: default
