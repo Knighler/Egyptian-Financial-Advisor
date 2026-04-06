@@ -1,0 +1,36 @@
+name: 'efa_transformations'
+version: '1.0.0'
+
+
+require-dbt-version: [">=1.7.0", "<3.0.0"]
+
+
+profile: 'Egyptian-Financial-Advisor'
+
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+
+vars:
+  start_date: '2026-04-06'
+
+models:
+  efa_transformations: 
+    staging:
+      +materialized: view 
+      +schema: staging    
+    marts:
+      +materialized: table 
+      +schema: main       
+      
+flags:
+  require_generic_test_arguments_property: true
