@@ -1,10 +1,16 @@
 version: 2
 
-sources:
-  - name: efa_raw
-    database: de-practice-490214 # Your GCP Project ID
-    schema: efa_raw_dataset      # The dataset Kestra writes to
-    tables:
-      - name: raw_stocks
-      - name: raw_gold
-      - name: raw_exchange
+models:
+  - name: fct_daily_asset_performance
+    description: "The core daily fact table combining stock performance with macro Gold and USD indicators."
+    columns:
+      - name: stock_daily_id
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_ticker_performance
+    description: "Current-day snapshot of moving averages, returns, and volatility for the AI Agent to quickly query."
+    
+  - name: fct_historical_stats
+    description: "Long-term aggregations providing historical context (ATH, ATL, historical volatility) for the AI."
