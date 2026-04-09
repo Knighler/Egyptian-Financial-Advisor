@@ -41,9 +41,9 @@ def get_settings() -> Settings:
         google_cloud_project=os.getenv("GOOGLE_CLOUD_PROJECT", ""),
         google_application_credentials=os.getenv("GOOGLE_APPLICATION_CREDENTIALS", ""),
         bigquery_dataset=os.getenv("BIGQUERY_DATASET", "efa_main"),
-        bigquery_location=os.getenv("BIGQUERY_LOCATION", "us-central1"),
+        bigquery_location=os.getenv("BIGQUERY_LOCATION", "US"),
         google_genai_api_key=os.getenv("GOOGLE_GENAI_API_KEY", ""),
-        google_genai_model=os.getenv("GOOGLE_GENAI_MODEL", "gemini-2.0-flash"),
+        google_genai_model=os.getenv("GOOGLE_GENAI_MODEL", "gemini-flash-latest"),
     )
 
 

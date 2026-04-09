@@ -10,9 +10,13 @@ export type UserProfile = {
   risk_tolerance: number;
 };
 
-type ProfileStatusResponse = {
+export type ProfileStatusResponse = {
   has_profile: boolean;
   profile: UserProfile | null;
+};
+
+type ChatResponse = {
+  response: string;
 };
 
 async function withAuthHeaders(user: User): Promise<Record<string, string>> {
@@ -49,4 +53,41 @@ export async function saveProfile(user: User, profile: UserProfile): Promise<voi
     const details = await response.text();
     throw new Error(details || "Unable to save profile");
   }
+}
+
+export async function fetchCurrentProfile(user: User): Promise<UserProfile> {
+  const profileStatus = await fetchProfileStatus(user);
+  if (!profileStatus.has_profile || !profileStatus.profile) {
+    throw new Error("Profile is missing");
+  }
+
+  return profileStatus.profile;
+}
+
+export async function sendChatMessage(user: User, message: string): Promise<string> {
+  const headers = await withAuthHeaders(user);
+  const response = await fetch(`${API_BASE_URL}/chat`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ message }),
+  });
+
+  if (!response.ok) {
+    let details = "Unable to get advisor response";
+    try {
+      const payload = (await response.json()) as { detail?: string };
+      if (payload?.detail) {
+        details = payload.detail;
+      }
+    } catch {
+      const text = await response.text();
+      if (text) {
+        details = text;
+      }
+    }
+    throw new Error(details);
+  }
+
+  const payload = (await response.json()) as ChatResponse;
+  return payload.response;
 }

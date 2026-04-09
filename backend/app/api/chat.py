@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.api.dependencies import get_current_user
 from app.schemas.chat import ChatIn, ChatOut
-from app.services.agent import run_financial_agent
+from app.services.agent import QuotaExceededError, run_financial_agent
 from app.services.firebase_admin import get_firestore_client
 
 logger = logging.getLogger(__name__)
@@ -36,11 +36,29 @@ def chat(payload: ChatIn, user: dict[str, Any] = Depends(get_current_user)) -> C
     try:
         answer = run_financial_agent(payload.message, profile)
         return ChatOut(response=answer)
-    except RuntimeError as exc:
-        logger.exception("Chat runtime failure")
+    except QuotaExceededError as exc:
+        logger.warning("Chat quota exceeded", extra={"uid": uid})
+        headers = (
+            {"Retry-After": str(exc.retry_after_seconds)}
+            if exc.retry_after_seconds
+            else None
+        )
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(exc),
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=(
+                "AI quota is currently exhausted for this project. "
+                "Please try again later or enable billing/increase Gemini quota."
+            ),
+            headers=headers,
+        ) from exc
+    except RuntimeError as exc:
+        logger.warning("Chat runtime failure", extra={"uid": uid})
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=(
+                "The advisory engine is temporarily unavailable. "
+                "Please try again in a moment."
+            ),
         ) from exc
     except Exception as exc:  # noqa: BLE001
         logger.exception("Chat engine failure")

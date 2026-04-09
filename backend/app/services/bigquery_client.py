@@ -4,6 +4,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
+from google.api_core.exceptions import NotFound
 from google.cloud import bigquery
 
 from app.core.config import settings
@@ -46,6 +47,38 @@ def run_select_query(
     logger.info("BigQuery SQL: %s | params=%s", sql, parameters or [])
 
     client = get_bigquery_client()
-    rows = client.query(sql, job_config=query_config).result()
+    configured_location = (settings.bigquery_location or "").strip() or None
+    candidate_locations: list[str | None] = []
+    for location in (configured_location, "US", "EU", None):
+        if location not in candidate_locations:
+            candidate_locations.append(location)
 
-    return [dict(row.items()) for row in rows]
+    last_error: Exception | None = None
+    for location in candidate_locations:
+        try:
+            rows = client.query(sql, job_config=query_config, location=location).result()
+            if location != configured_location:
+                logger.warning(
+                    "BigQuery location fallback in use. configured=%s active=%s",
+                    configured_location,
+                    location,
+                )
+            return [dict(row.items()) for row in rows]
+        except NotFound as exc:
+            last_error = exc
+            message = str(exc).lower()
+            if "was not found in location" in message:
+                logger.warning(
+                    "BigQuery dataset not found in location '%s'. Trying next location.",
+                    location,
+                )
+                continue
+            raise
+
+    if last_error:
+        raise RuntimeError(
+            "BigQuery dataset location mismatch. "
+            "Update BIGQUERY_LOCATION to your dataset region (for example US or EU)."
+        ) from last_error
+
+    raise RuntimeError("BigQuery query failed for an unknown reason.")

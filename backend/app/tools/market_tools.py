@@ -27,9 +27,9 @@ def get_ticker_performance(ticker_symbol: str) -> str:
     if not cleaned:
         return "Ticker symbol is required."
 
-        table = _qualified_table("dim_ticker_performance")
+    table = _qualified_table("dim_ticker_performance")
 
-        sql = f"""
+    sql = f"""
 SELECT
   ticker,
   last_updated,
