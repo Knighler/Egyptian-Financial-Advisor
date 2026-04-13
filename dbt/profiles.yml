@@ -7,6 +7,6 @@ Egyptian-Financial-Advisor:
       project: de-practice-490214
       dataset: efa_main
       threads: 4
-      keyfile: ../Egyptian-Financial-Advisor/gcp-key.json 
+      keyfile: /app/gcp-key.json 
       timeout_seconds: 300
       priority: interactive
