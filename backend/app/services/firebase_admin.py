@@ -46,6 +46,4 @@ def verify_user_token(id_token: str) -> dict:
 
 
 def get_firestore_client() -> firestore.Client:
-    return firestore.client(
-        app=get_firebase_app(), database_id=settings.firestore_database_id
-    )
+    return firestore.client(app=get_firebase_app(), database_id="efa-users")
