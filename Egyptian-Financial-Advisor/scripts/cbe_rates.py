@@ -41,7 +41,7 @@ if __name__ == "__main__":
     df = pd.DataFrame([data])
     
     #os.makedirs("codebase/data", exist_ok=True)
-base_dir = os.path.dirname(os.path.abspath(__file__))
+    base_dir = os.path.dirname(os.path.abspath(__file__))
     project_root = os.path.abspath(os.path.join(base_dir, ".."))
     data_dir = os.path.join(project_root, "data")
     
