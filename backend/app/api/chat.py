@@ -1,16 +1,42 @@
 import logging
 from typing import Any
 
+from firebase_admin import firestore
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.api.dependencies import get_current_user
 from app.schemas.chat import ChatIn, ChatOut
-from app.services.agent import QuotaExceededError, run_financial_agent
+from app.services.agent import (
+    QuotaExceededError,
+    extract_conversation_updates,
+    run_financial_agent,
+)
 from app.services.firebase_admin import get_firestore_client
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(tags=["chat"])
+
+PROFILE_FIELDS = (
+    "monthly_income",
+    "savings",
+    "investment_goal",
+    "risk_tolerance",
+)
+
+
+def _extract_profile(document_data: dict[str, Any]) -> dict[str, Any]:
+    nested_profile = document_data.get("profile")
+    profile = nested_profile if isinstance(nested_profile, dict) else {}
+
+    merged_profile: dict[str, Any] = {}
+    for field in PROFILE_FIELDS:
+        if field in profile:
+            merged_profile[field] = profile[field]
+        elif field in document_data:
+            merged_profile[field] = document_data[field]
+
+    return merged_profile
 
 
 @router.post("/chat", response_model=ChatOut)
@@ -23,7 +49,8 @@ def chat(payload: ChatIn, user: dict[str, Any] = Depends(get_current_user)) -> C
         )
 
     db = get_firestore_client()
-    profile_doc = db.collection("users").document(uid).get()
+    user_doc_ref = db.collection("users").document(uid)
+    profile_doc = user_doc_ref.get()
 
     if not profile_doc.exists:
         raise HTTPException(
@@ -31,10 +58,51 @@ def chat(payload: ChatIn, user: dict[str, Any] = Depends(get_current_user)) -> C
             detail="User profile missing. Complete onboarding first.",
         )
 
-    profile = profile_doc.to_dict() or {}
+    user_document = profile_doc.to_dict() or {}
+    profile = _extract_profile(user_document)
+    existing_memory = user_document.get("memory")
+    if not isinstance(existing_memory, dict):
+        existing_memory = {}
 
     try:
         answer = run_financial_agent(payload.message, profile)
+
+        try:
+            updates = extract_conversation_updates(
+                user_message=payload.message,
+                assistant_response=answer,
+                profile=profile,
+                existing_memory=existing_memory,
+            )
+
+            profile_updates = updates.get("profile_updates", {})
+            memory_updates = updates.get("memory", {})
+
+            merged_profile = dict(profile)
+            if isinstance(profile_updates, dict):
+                merged_profile.update(profile_updates)
+
+            merged_memory = dict(existing_memory)
+            if isinstance(memory_updates, dict):
+                merged_memory.update(memory_updates)
+            merged_memory["last_interaction"] = firestore.SERVER_TIMESTAMP
+
+            firestore_update: dict[str, Any] = {
+                "updated_at": firestore.SERVER_TIMESTAMP,
+                "profile": merged_profile,
+                "memory": merged_memory,
+            }
+
+            # Keep legacy flattened profile fields for compatibility with existing frontend code.
+            firestore_update.update(merged_profile)
+            user_doc_ref.set(firestore_update, merge=True)
+        except Exception as exc:  # noqa: BLE001
+            logger.exception(
+                "Failed to persist conversation memory/profile updates",
+                extra={"uid": uid},
+                exc_info=exc,
+            )
+
         return ChatOut(response=answer)
     except QuotaExceededError as exc:
         logger.warning("Chat quota exceeded", extra={"uid": uid})
