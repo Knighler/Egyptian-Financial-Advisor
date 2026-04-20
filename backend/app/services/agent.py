@@ -10,7 +10,14 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_google_genai.chat_models import ChatGoogleGenerativeAIError
 
 from app.core.config import settings
-from app.tools.market_tools import get_daily_pulse, get_ticker_performance
+from app.tools.market_tools import (
+    get_available_database_topics,
+    get_daily_pulse,
+    get_historical_stats,
+    get_ticker_performance,
+    query_financial_database,
+)
+from app.tools.web_tools import search_web_with_gemini
 
 logger = logging.getLogger(__name__)
 
@@ -103,7 +110,14 @@ def _invoke_agent_with_model(
 ) -> dict[str, Any]:
     agent = create_agent(
         model=get_chat_model(model_name),
-        tools=[get_ticker_performance, get_daily_pulse],
+        tools=[
+            query_financial_database,
+            get_available_database_topics,
+            get_ticker_performance,
+            get_daily_pulse,
+            get_historical_stats,
+            search_web_with_gemini,
+        ],
         system_prompt=system_prompt,
     )
 
@@ -151,9 +165,16 @@ def run_financial_agent(message: str, profile: dict[str, Any]) -> str:
     system_prompt = (
         "You are Egyptian Financial Advisor, a cautious and practical financial assistant. "
         "ALWAYS use the provided user profile context first before giving advice. "
-        "If market claims require data, call available tools before answering. "
-        "Use concise, clear language and include risk-aware caveats. "
-        "Do not fabricate numbers.\n\n"
+        "Never invent facts, prices, rates, or news. "
+        "For factual market/economic claims, call tools before answering.\n\n"
+        "Tool usage policy:\n"
+        "1) Database first: use query_financial_database for topics covered by the data pipeline "
+        "(stocks, ticker performance, historical stats, gold, USD/EGP, macro indicators, CBE policy rates, and bank CD rates).\n"
+        "2) Use search_web_with_gemini for requests outside database coverage, or when the user asks for live breaking news/latest updates not present in the database.\n"
+        "3) Hybrid requests: if a question needs both historical/database facts and fresh web context, call BOTH relevant tools before answering.\n"
+        "4) If a tool reports missing/empty data, say that clearly and then use the other suitable tool.\n"
+        "5) In the final answer, clearly separate database findings from web-search findings and add a brief risk-aware recommendation.\n\n"
+        "Use concise, clear language and include risk-aware caveats.\n\n"
         f"User profile context from Firestore (must be used first): {profile_context}"
     )
 
